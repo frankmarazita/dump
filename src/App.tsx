@@ -67,7 +67,7 @@ function DumpEditor({ dump }: { dump: Dump }) {
       value={dump.text}
       fullscreen={true}
       extraCommands={[]}
-      onChange={(value) => editDump({ ...dump, text: value })}
+      onChange={(value) => editDump({ ...dump, text: value ?? "" })}
     />
   );
 }
