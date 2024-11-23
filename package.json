@@ -7,9 +7,11 @@
   },
   "dependencies": {
     "@instantdb/react": "^0.15.7",
+    "@uiw/react-md-editor": "^4.0.4",
     "next": "latest",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-spinners": "^0.14.1"
   },
   "devDependencies": {
     "@types/node": "20.10.8",

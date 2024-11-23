@@ -1,6 +1,8 @@
 "use client";
 
 import { id, init, tx } from "@instantdb/react";
+import MDEditor from "@uiw/react-md-editor";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const APP_ID = "57079df8-619e-4250-a8c4-42db4a463cda";
 
@@ -20,10 +22,25 @@ function App() {
   const { isLoading, error, data } = db.useQuery({ dump: {} });
 
   if (isLoading) {
-    return <div>Fetching data...</div>;
+    return (
+      <div
+        style={
+          {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          } as React.CSSProperties
+        }
+      >
+        <ClipLoader color="#000" speedMultiplier={3} />
+      </div>
+    );
   }
+
   if (error) {
-    return <div>Error fetching data: {error.message}</div>;
+    console.error(error);
+    return <div>An error occurred!</div>;
   }
 
   const { dump } = data;
@@ -35,55 +52,23 @@ function App() {
     );
   }
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.header}>dump</div>
-      {dump.map((d) => (
-        <DumpForm key={d.id} dump={d} />
-      ))}
-    </div>
-  );
+  const d = dump[0]; // get the first dump
+
+  return <DumpEditor key={d.id} dump={d} />;
 }
 
 function editDump(dump: Dump) {
   db.transact(tx.dump[dump.id].update(dump));
 }
 
-function DumpForm({ dump }: { dump: Dump }) {
-  // Text area for editing the dump text
+function DumpEditor({ dump }: { dump: Dump }) {
   return (
-    <textarea
+    <MDEditor
       value={dump.text}
-      style={styles.input}
-      onChange={(e) => editDump({ ...dump, text: e.target.value })}
+      fullscreen={true}
+      extraCommands={[]}
+      onChange={(value) => editDump({ ...dump, text: value })}
     />
   );
 }
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    boxSizing: "border-box",
-    backgroundColor: "#fafafa",
-    fontFamily: "code, monospace",
-    height: "100vh",
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "column",
-  },
-  header: {
-    letterSpacing: "2px",
-    fontSize: "50px",
-    color: "lightgray",
-    marginBottom: "10px",
-  },
-  input: {
-    backgroundColor: "transparent",
-    fontFamily: "code, monospace",
-    padding: "10px",
-    fontStyle: "italic",
-    height: "calc(100vh - 170px)",
-    width: "80%",
-  },
-};
-
 export default App;
