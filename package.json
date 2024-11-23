@@ -1,7 +1,6 @@
 {
   "name": "dump",
   "version": "0.1.0",
-  "homepage": "https://frankmarazita.github.io/dump",
   "private": true,
   "dependencies": {
     "@instantdb/react": "^0.15.7",
