@@ -19,7 +19,20 @@ type Schema = {
 const db = init<Schema>({ appId: APP_ID });
 
 function App() {
-  const { isLoading, error, data } = db.useQuery({ dump: {} });
+  const pathname = window.location.pathname;
+  const filepath = decodeURIComponent(pathname.substring(1));
+  const parts = filepath.split("/");
+  const title = parts[parts.length - 1];
+
+  const { isLoading, error, data } = db.useQuery({
+    dump: {
+      $: {
+        where: {
+          filepath: filepath,
+        },
+      },
+    },
+  });
 
   if (isLoading) {
     return (
@@ -48,27 +61,38 @@ function App() {
   // if no dump exists, create one
   if (dump.length === 0) {
     db.transact(
-      tx.dump[id()].update({ text: "Hello, World!", createdAt: Date.now() })
+      tx.dump[id()].update({
+        text: "",
+        createdAt: Date.now(),
+        filepath: filepath,
+      })
     );
+  }
+
+  if (dump.length === 0) {
+    return <div></div>;
   }
 
   const d = dump[0]; // get the first dump
 
-  return <DumpEditor key={d.id} dump={d} />;
+  return <DumpEditor key={d.id} dump={d} title={title} />;
 }
 
 function editDump(dump: Dump) {
   db.transact(tx.dump[dump.id].update(dump));
 }
 
-function DumpEditor({ dump }: { dump: Dump }) {
+function DumpEditor({ dump, title }: { dump: Dump; title: string }) {
   return (
-    <MDEditor
-      value={dump.text}
-      fullscreen={true}
-      extraCommands={[]}
-      onChange={(value) => editDump({ ...dump, text: value ?? "" })}
-    />
+    <div className="flex w-full flex-grow flex-col overflow-y-auto bg-[#0d1117] text-[#c9d1d9]">
+      <h1 className="text-2xl font-bold p-4">{title || "DUMP"}</h1>
+      <MDEditor
+        className="flex-grow"
+        value={dump.text}
+        extraCommands={[]}
+        onChange={(value) => editDump({ ...dump, text: value ?? "" })}
+      />
+    </div>
   );
 }
 export default App;
