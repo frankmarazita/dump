@@ -7,6 +7,20 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 const APP_ID = "57079df8-619e-4250-a8c4-42db4a463cda";
 
+// Handle internal links such that they now work with the hash router
+window.onclick = function (e) {
+  if ((e.target as HTMLElement).localName === "a") {
+    if ((e.target as HTMLElement).getAttribute("href")?.startsWith("/")) {
+      console.log("click");
+      e.preventDefault();
+      // redirect to the new page
+      window.location.href = `#${(e.target as HTMLElement).getAttribute(
+        "href"
+      )}`;
+    }
+  }
+};
+
 type Dump = {
   id: string;
   text: string;
