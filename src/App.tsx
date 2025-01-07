@@ -2,6 +2,7 @@
 
 import { id, init, tx } from "@instantdb/react";
 import MDEditor from "@uiw/react-md-editor";
+import { useLocation } from "react-router-dom";
 import ClipLoader from "react-spinners/ClipLoader";
 
 const APP_ID = "57079df8-619e-4250-a8c4-42db4a463cda";
@@ -19,7 +20,7 @@ type Schema = {
 const db = init<Schema>({ appId: APP_ID });
 
 function App() {
-  const pathname = window.location.pathname;
+  const { pathname } = useLocation();
   const filepath = decodeURIComponent(pathname.substring(1));
   const parts = filepath.split("/");
   const title = parts[parts.length - 1];
