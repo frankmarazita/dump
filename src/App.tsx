@@ -7,16 +7,31 @@ import ClipLoader from "react-spinners/ClipLoader";
 
 const APP_ID = "57079df8-619e-4250-a8c4-42db4a463cda";
 
+var checkDomain = function (url: string) {
+  if (url.indexOf("//") === 0) {
+    url = window.location.protocol + url;
+  }
+  return url
+    .toLowerCase()
+    .replace(/([a-z])?:\/\//, "$1")
+    .split("/")[0];
+};
+
+var isExternal = function (url: string) {
+  return (
+    (url.indexOf(":") > -1 || url.indexOf("//") > -1) &&
+    checkDomain(window.location.href) !== checkDomain(url)
+  );
+};
+
 // Handle internal links such that they now work with the hash router
 window.onclick = function (e) {
   if ((e.target as HTMLElement).localName === "a") {
-    if ((e.target as HTMLElement).getAttribute("href")?.startsWith("/")) {
-      console.log("click");
+    const url = (e.target as HTMLElement).getAttribute("href") || "";
+
+    if (!isExternal(url)) {
       e.preventDefault();
-      // redirect to the new page
-      window.location.href = `#${(e.target as HTMLElement).getAttribute(
-        "href"
-      )}`;
+      window.location.href = `#${url}`;
     }
   }
 };
